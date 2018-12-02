@@ -10,8 +10,9 @@ public class Main {
             Viterbi alg=new Viterbi(templates);
             alg.trainTemplates("train.utf8");
 
-            alg.setSentence("他们织起了一个庞大的知识关系网，将内心的阴郁想法摆正，打扮漂亮。");
-            alg.runAlgorithm();
+            alg.setSentence("塞雷");
+            //alg.runAlgorithm();
+            alg.realViterbi();
             //System.out.println(alg.getLabels());
             alg.printSegment();
         } catch (FileNotFoundException e) {

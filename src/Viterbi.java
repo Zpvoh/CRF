@@ -36,17 +36,18 @@ public class Viterbi {
     public void trainTemplates(String filename) throws FileNotFoundException {
         int sum=0;
 
-        while(sum<5){
+        while(sum<1){
             System.out.println(sum);
 
             FileInputStream fileInputStream=new FileInputStream(filename);
             Scanner scanner=new Scanner(fileInputStream);
             int sentenceIndex=0;
-            while (scanner.hasNext() && sentenceIndex<20000){
+            while (scanner.hasNext() && sentenceIndex<23000){
                 readNextSentence(scanner);
                 //System.out.println("sentence is "+sentence);
                 //System.out.println("real labels are "+actualLabels);
-                runAlgorithm();
+                //runAlgorithm();
+                realViterbi();
                 //System.out.println("labels are "+labels);
 
                 for(int i=0; i<labels.length(); i++){
@@ -77,7 +78,8 @@ public class Viterbi {
                 readNextSentence(scanner);
                 //System.out.println("sentence is "+sentence);
                 //System.out.println("real labels are "+actualLabels);
-                runAlgorithm();
+                //runAlgorithm();
+                realViterbi();
                 //System.out.println("labels are "+labels);
 
                 for(int i=0; i<labels.length(); i++){
@@ -94,7 +96,7 @@ public class Viterbi {
         }
     }
 
-    public void runAlgorithm(){
+/*    public void runAlgorithm(){
         labels="";
 
         for(int i=0; i<sentence.length(); i++){
@@ -125,6 +127,47 @@ public class Viterbi {
                     break;
             }
         }
+    }*/
+
+    public void realViterbi(){
+        String[] labelSeqs=new String[4];
+        int[] scores=new int[4];
+
+        for(int i=0; i<4; i++){
+            labelSeqs[i]=Constants.LABELS[i];
+            for(int j=0; j<templates.size(); j++){
+                Template template=templates.get(j);
+                scores[i]+=template.match(sentence, Constants.N, Constants.LABELS[i], 0);
+            }
+        }
+
+        for(int i=1; i<sentence.length(); i++){
+            String[] newLabelSeqs=new String[4];
+            int[] newScores=new int[4];
+            for(int p=0; p<4; p++){
+                int[] nums=new int[4];
+                for(int k=0; k<4; k++){
+                    for(int j=0; j<templates.size(); j++){
+                        Template template=templates.get(j);
+                        nums[k]+=template.match(sentence, Constants.LABELS[k], Constants.LABELS[p], i);
+                    }
+                    nums[k]+=scores[k];
+                }
+
+                int index=max(nums);
+                newLabelSeqs[p]=labelSeqs[index]+Constants.LABELS[p];
+                newScores[p]=nums[index];
+            }
+
+            for(int count=0; count<4; count++){
+                labelSeqs[count]=newLabelSeqs[count];
+                scores[count]=newScores[count];
+            }
+        }
+
+        int index=max(scores);
+        labels=labelSeqs[index];
+
     }
 
     public void printSegment(){

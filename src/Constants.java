@@ -8,4 +8,6 @@ public class Constants {
     public static final String I="I";
     public static final String S="S";
 
+    public static final String[] LABELS={B, E, I, S, N};
+
 }
